@@ -6,33 +6,46 @@
     5. Create a UI output for party baskets
  */
 
-
 using CandyShop.Data;
 using CandyShop.Models;
 
-namespace CandyShop
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Welcome to the Candy Shop!");
-            Console.WriteLine("------------------------------------------------");
-            Console.WriteLine();
+namespace CandyShop {
+    class Program {
+        static void Main (string[] args) {
+            // Setup
+            CandyRepository inventory = new CandyRepository ();
+            inventory.SeedData ();
+            List<Candy> allTheCandies = inventory.GetAllCandy ();
+
+            DisplayCaseRepository caseRepo = new DisplayCaseRepository ();
+            var chocolateDisplayCase = caseRepo.PurchaseDisplayCase ("chocolate", 120);
+            var gummyDisplayCase = caseRepo.PurchaseDisplayCase ("gummy", 235);
+            var hardCandyDisplayCase = caseRepo.PurchaseDisplayCase ("hard candy", 92);
+            List<DisplayCase> allCases = caseRepo.GetAllDisplayCases ();
+
+            Candy surprises = allTheCandies.Find (c => c.Name == "Chocolate Surprise");
+            caseRepo.AddCandyToDisplayCase (surprises, 20, chocolateDisplayCase);
+
+            Candy truffles = allTheCandies.Find (c => c.Name == "Dark Velvet Truffle");
+            caseRepo.AddCandyToDisplayCase (truffles, 8, chocolateDisplayCase);
+
+            Console.WriteLine ("Welcome to the Candy Shop!");
+            Console.WriteLine ("------------------------------------------------");
+            Console.WriteLine ();
 
             // Display current inventory
-            CandyRepository inventory = new CandyRepository();
-            inventory.SeedData();
-            List<Candy> allTheCandies = inventory.GetAllCandy();
 
-            foreach (Candy candy in allTheCandies)
-            {
-                Console.WriteLine($"{candy.Name} costs {candy.Price}");
+            foreach (Candy candy in allTheCandies) {
+                Console.WriteLine ($"{candy.Name} costs {candy.Price}");
             }
 
+            foreach (var displayCase in allCases) {
+                Console.WriteLine ($"Display case for {displayCase.CandyType} can contain {displayCase.Capacity} items");
+                Console.WriteLine ($"It currently contains {displayCase.CurrentStock.Count} items");
+            }
 
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            Console.WriteLine ("Press any key to exit...");
+            Console.ReadKey ();
         }
     }
 }
